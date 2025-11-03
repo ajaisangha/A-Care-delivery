@@ -11,8 +11,32 @@ const getZoneIndex = (km) => {
   return 3;
 };
 
+// Define service-specific options
+const SERVICE_OPTIONS = {
+  florist: [
+    { label: "Single Bouquet", key: "single" },
+    { label: "Premium Arrangement", key: "premium" },
+  ],
+  pharmacy: [
+    { label: "Standard Delivery", key: "standard" },
+    { label: "Urgent Medication", key: "urgent" },
+  ],
+  retail: [
+    { label: "Small (<2kg)", key: "small" },
+    { label: "Medium (2-10kg)", key: "medium" },
+    { label: "Large (10-20kg)", key: "large" },
+  ],
+  sameday: [
+    { label: "Economy", key: "economy" },
+    { label: "Standard", key: "standard" },
+    { label: "Express", key: "express" },
+  ],
+};
+
+
 export default function Estimates() {
   const [serviceType, setServiceType] = useState("");
+  const [serviceOption, setServiceOption] = useState("");
   const [destination, setDestination] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [pickup, setPickup] = useState(false);
@@ -46,9 +70,8 @@ export default function Estimates() {
     return () => clearInterval(interval);
   }, []);
 
-  // Function to calculate route & estimate
   const calculateRoute = async () => {
-    if (!serviceType || !destination) {
+    if (!serviceType || !serviceOption || !destination) {
       setEstimate(null);
       return;
     }
@@ -88,7 +111,7 @@ export default function Estimates() {
         );
       });
 
-      // Render route on map
+      // Render route
       if (!directionsRendererRef.current) {
         directionsRendererRef.current = new window.google.maps.DirectionsRenderer();
         directionsRendererRef.current.setMap(mapRef.current);
@@ -111,23 +134,7 @@ export default function Estimates() {
 
       // Zone & rate calculation
       const zoneIndex = getZoneIndex(km);
-      let baseRate = 0;
-      switch (serviceType) {
-        case "florist":
-          baseRate = RATES.florist.single[zoneIndex];
-          break;
-        case "pharmacy":
-          baseRate = RATES.pharmacy.standard[zoneIndex];
-          break;
-        case "retail":
-          baseRate = RATES.retail.small[zoneIndex];
-          break;
-        case "sameday":
-          baseRate = RATES.sameday.economy[zoneIndex];
-          break;
-        default:
-          baseRate = 0;
-      }
+      let baseRate = RATES[serviceType]?.[serviceOption]?.[zoneIndex] || 0;
 
       let totalRate = baseRate * quantity;
       if (pickup) totalRate += baseRate * 0.5;
@@ -135,7 +142,7 @@ export default function Estimates() {
       const discount = VOLUME_DISCOUNTS.find(
         (d) => quantity >= d.min && quantity <= d.max
       );
-      if (discount) totalRate = totalRate * (1 - discount.discount);
+      if (discount) totalRate *= 1 - discount.discount;
 
       setEstimate(totalRate.toFixed(2));
     } catch (err) {
@@ -147,16 +154,13 @@ export default function Estimates() {
     }
   };
 
-  // Dynamic update whenever addresses, pickup, or serviceType change
   useEffect(() => {
-    if (destination) {
-      calculateRoute();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [destination, pickupAddress, pickup, serviceType, quantity]);
+    if (destination) calculateRoute();
+  }, [destination, pickupAddress, pickup, serviceType, serviceOption, quantity]);
 
   const handleClear = () => {
     setServiceType("");
+    setServiceOption("");
     setDestination("");
     setQuantity(1);
     setPickup(false);
@@ -186,21 +190,46 @@ export default function Estimates() {
         {/* Form Left */}
         <div className="col-lg-6 mb-4">
           <form onSubmit={(e) => e.preventDefault()}>
+            {/* Service Type */}
             <div className="mb-3">
               <label className="form-label fw-bold">Service Type</label>
               <select
                 className="form-select"
                 value={serviceType}
-                onChange={(e) => setServiceType(e.target.value)}
+                onChange={(e) => {
+                  setServiceType(e.target.value);
+                  setServiceOption(""); // reset sub-option when service changes
+                }}
               >
                 <option value="">Select service</option>
-                <option value="florist">Florist Delivery</option>
-                <option value="pharmacy">Pharmacy Delivery</option>
-                <option value="retail">Retail Delivery</option>
-                <option value="sameday">Same-Day Delivery</option>
+                {Object.keys(SERVICE_OPTIONS).map((key) => (
+                  <option key={key} value={key}>
+                    {key.charAt(0).toUpperCase() + key.slice(1)} Delivery
+                  </option>
+                ))}
               </select>
             </div>
 
+            {/* Service Options */}
+            {serviceType && (
+              <div className="mb-3">
+                <label className="form-label fw-bold">Service Option</label>
+                <select
+                  className="form-select"
+                  value={serviceOption}
+                  onChange={(e) => setServiceOption(e.target.value)}
+                >
+                  <option value="">Select option</option>
+                  {SERVICE_OPTIONS[serviceType].map((opt) => (
+                    <option key={opt.key} value={opt.key}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Destination */}
             <div className="mb-3">
               <label className="form-label fw-bold">Destination Address</label>
               <Autocomplete
@@ -218,6 +247,7 @@ export default function Estimates() {
               </Autocomplete>
             </div>
 
+            {/* Quantity */}
             <div className="mb-3">
               <label className="form-label fw-bold">Quantity</label>
               <input
@@ -229,6 +259,7 @@ export default function Estimates() {
               />
             </div>
 
+            {/* Pickup */}
             <div className="form-check mb-2">
               <input
                 className="form-check-input"
@@ -243,6 +274,7 @@ export default function Estimates() {
               <div className="form-text">Extra charges apply for pickup.</div>
             </div>
 
+            {/* Pickup Address */}
             {pickup && (
               <div className="mb-3">
                 <label className="form-label fw-bold">Pickup Address</label>
