@@ -67,3 +67,109 @@ body,
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
+/* home page */
+/* Home page uses full remaining height but allows content to expand */
+.home-page {
+  min-height: calc(100vh - 140px); /* 70px navbar + 70px footer */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Carousel container */
+.home-carousel,
+.carousel-bg {
+  min-height: calc(100vh - 140px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Carousel background image */
+.carousel-bg {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+/* Overlay styling */
+.carousel-overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 90%;
+  text-align: center;
+}
+
+/* Text styling */
+.carousel-title {
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+}
+
+.carousel-text {
+  color: #fff;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.6);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  line-height: 1.5;
+}
+
+/* Animate overlay text */
+.animate-text {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 1s ease forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .carousel-title {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+  }
+  .carousel-text {
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+  }
+  .carousel-overlay {
+    padding: 20px;
+  }
+}
+
+/* Carousel arrows darker for visibility */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%; /* slightly larger click area */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: brightness(0) invert(1); /* make arrows white for contrast */
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent dark circle */
+  border-radius: 50%;
+  padding: 20px; /* increase size of icon */
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  background-color: rgba(0, 0, 0, 0.7); /* darker on hover */
+}
+
+/* Optional: increase z-index to stay above overlay */
+.carousel-control-prev,
+.carousel-control-next {
+  z-index: 1060;
+}
+
+/* Add space to navbar brand */
+.navbar .navbar-brand {
+  margin-left: 5rem; /* adjust as needed */
+}

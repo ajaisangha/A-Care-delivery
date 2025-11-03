@@ -41,15 +41,24 @@ export default function Rates() {
 
   return (
     <div className="container py-5">
-      <h2 className="mb-4">Rates by Service</h2>
+      <h2 className="mb-4 text-center">Rates by Service</h2>
+
+      {/* Add a visual banner at top */}
+      <div className="mb-5 text-center">
+        <img
+          src="https://images.pexels.com/photos/53610/delivery-van-parcel-courier-53610.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+          alt="Delivery van"
+          className="img-fluid rounded"
+        />
+      </div>
 
       <RateTable title="Florist Deliveries" data={RATES.florist} service="florist" />
       <RateTable title="Pharmacy Deliveries" data={RATES.pharmacy} service="pharmacy" />
       <RateTable title="Retail Deliveries" data={RATES.retail} service="retail" />
-      <RateTable title="Same-Day Deliveries" data={RATES.sameday} service="sameday" />
+      <RateTable title="Same‑Day Deliveries" data={RATES.sameday} service="sameday" />
 
       <div className="alert alert-info mt-3">
-        <strong>Note:</strong> Zone 4 (15+ km) deliveries require a custom quote.
+        <strong>Note:</strong> Zone 4 (15+ km) deliveries require a custom quote.
       </div>
     </div>
   );
