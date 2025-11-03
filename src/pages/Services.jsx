@@ -1,54 +1,56 @@
-// src/pages/Services.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Services() {
   const services = [
     {
-      id: "florist",
-      title: "Florist Delivery",
-      desc: "Delicate handling for floral arrangements with photo proof of delivery.",
-      img: "https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      name: "Florist Delivery",
+      description:
+        "Professional pickup and delivery of floral arrangements with care and photo confirmation.",
+      img: "https://assets.eflorist.com/assets/products/PHR_/T209-3A.jpg",
     },
     {
-      id: "pharmacy",
-      title: "Pharmacy Delivery",
-      desc: "Fast and secure prescription delivery across Waterloo Region.",
-      img: "https://images.pexels.com/photos/416825/pexels-photo-416825.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      name: "Pharmacy Delivery",
+      description:
+        "Pickup and delivery of prescriptions with discreet packaging and temperature control.",
+      img: "https://media.istockphoto.com/id/1469686707/photo/delivery-worker-hands-holding-medications-parcel.jpg?s=612x612&w=0&k=20&c=XwgJ2dcED8EClXuo-Ik24hbmF5P5SvFvJnETfw0LHzU=",
     },
     {
-      id: "retail",
-      title: "Retail Delivery",
-      desc: "Reliable local store delivery of small and medium‑sized items.",
-      img: "https://images.pexels.com/photos/3952940/pexels-photo-3952940.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      name: "Retail Delivery",
+      description:
+        "Pickup and delivery of small to medium packages, including electronics, clothing, and more.",
+      img: "https://www.track-pod.com/assets/Uploads/Blog/retail-deliveries/1__FitWzU2MCw3NTBd.webp",
     },
     {
-      id: "sameday",
-      title: "Same‑Day Courier",
-      desc: "Express, standard or economy delivery for your urgent items.",
-      img: "https://images.pexels.com/photos/51375/package-delivery-postman-postbox-51375.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      name: "Same-Day Delivery",
+      description:
+        "Fast local delivery for urgent documents, parcels, or gifts within hours.",
+      img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2644250/capsule_616x353.jpg?t=1700166663",
     },
   ];
 
   return (
     <div className="container py-5">
-      <h2 className="mb-4 text-center">Our Services</h2>
+      <h2 className="mb-5 text-center">Our Services</h2>
       <div className="row g-4">
-        {services.map((s) => (
-          <div key={s.id} className="col-md-6 col-lg-3">
+        {services.map((service, index) => (
+          <div className="col-md-6 col-lg-3" key={index}>
             <div className="card h-100 shadow-sm">
-              <img src={s.img} className="card-img-top" alt={s.title} />
+              <img
+                src={service.img}
+                className="card-img-top"
+                alt={service.name}
+                style={{ height: "180px", objectFit: "cover" }}
+              />
               <div className="card-body d-flex flex-column">
-                <h5 className="card-title">{s.title}</h5>
-                <p className="card-text">{s.desc}</p>
-                <div className="mt-auto text-end">
-                  <Link
-                    to={`/estimates?service=${s.id}`}
-                    className="btn btn-outline-primary btn-sm"
-                  >
-                    Get Estimate →
-                  </Link>
-                </div>
+                <h5 className="card-title">{service.name}</h5>
+                <p className="card-text">{service.description}</p>
+                <Link
+                  to="/estimates"
+                  className="btn btn-primary mt-auto"
+                >
+                  Get Estimate
+                </Link>
               </div>
             </div>
           </div>
