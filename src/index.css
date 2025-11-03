@@ -66,3 +66,47 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* src/index.css */
+
+/* Ensure body and root take full height */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Flex layout to keep footer at bottom */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navbar fixed at top */
+.navbar-fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1030; /* higher than Bootstrap dropdowns */
+}
+
+/* Footer fixed at bottom */
+.footer-fixed-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1020;
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 70px; /* space for fixed navbar */
+  padding-bottom: 60px; /* space for fixed footer */
+}
