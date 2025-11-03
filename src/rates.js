@@ -1,15 +1,25 @@
-// src/rates.js
+// Define zones based on distance (in km)
 export const ZONES = [
-  { id: 1, name: "Zone 1 (0-5 km)" },
-  { id: 2, name: "Zone 2 (5-10 km)" },
-  { id: 3, name: "Zone 3 (10-15 km)" },
-  { id: 4, name: "Zone 4 (15 km+)" },
+  { name: "Zone 1", maxKm: 5 },
+  { name: "Zone 2", maxKm: 10 },
+  { name: "Zone 3", maxKm: 15 },
+  { name: "Zone 4", maxKm: Infinity }, // Custom quote
 ];
 
+// Define rates for each service type
 export const RATES = {
-  florist: { single: [14, 18, 22], premium: [18, 22, 26], multiple: [25, 32, 40] },
+  florist: { single: [14, 18, 22], premium: [18, 22, 26] },
   pharmacy: { standard: [9, 12, 15], urgent: [18, 22, 28] },
-  retail: { small: [13, 17, 21], medium: [17, 22, 27] },
-  sameday: { economy: [11, 14, 17], express: [25, 30, 35] },
-  extras: { handling: 2, waitingPerMin: 0.75, fuelSurchargePct: 0.05 },
+  retail: { small: [13, 17, 21], medium: [17, 22, 27], large: [24, 30, 36] },
+  sameday: { economy: [11, 14, 17], standard: [16, 20, 24], express: [25, 30, 35] },
 };
+
+// Volume discounts based on quantity
+export const VOLUME_DISCOUNTS = [
+  { min: 10, max: 19, discount: 0.1 },
+  { min: 20, max: 49, discount: 0.15 },
+  { min: 50, max: Infinity, discount: 0.2 },
+];
+
+// Base address
+export const BASE_ADDRESS = "378 Vogel Pl, Waterloo";

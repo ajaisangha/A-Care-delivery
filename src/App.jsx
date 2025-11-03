@@ -24,9 +24,8 @@ export default function App() {
       </main>
 
       <footer className="footer text-center py-3">
-        &copy; {new Date().getFullYear()} A+ Care Delivery
+        &copy; {new Date().getFullYear()} A+ Care Delivery — Vogel Pl, Waterloo
       </footer>
-
     </div>
   );
 }
