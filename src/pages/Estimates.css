@@ -1,40 +1,113 @@
-/* Card style for form and estimate */
-.estimate-form,
-.estimate-card,
-.map-card {
+/* General page container adjustments */
+.container.py-5 {
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Form Card */
+.estimate-form {
+  background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Map container */
-.map-card {
-  height: 500px;
-  width: 100%;
-}
-
-/* Responsive adjustments */
-@media (max-width: 991px) {
-  .map-card {
-    height: 400px;
-    margin-top: 20px;
-  }
-}
-
-.estimate-card h5 {
+.estimate-form .form-label {
   font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.estimate-card p {
-  margin-bottom: 5px;
+  color: #333;
 }
 
 .estimate-form select,
 .estimate-form input {
   border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.3s;
 }
 
-.estimate-form .btn {
+.estimate-form select:focus,
+.estimate-form input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+/* Button spacing */
+.estimate-form .d-flex.gap-2 button {
+  flex: 1;
+}
+
+/* Map Card */
+.map-card {
+  margin-left: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem;
+  min-height: 400px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Estimate Result Card */
+.estimate-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1rem 1.5rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.estimate-card h5 {
+  font-weight: 600;
+  color: #0d6efd;
+  margin-bottom: 0.75rem;
+}
+
+.estimate-card p {
+  font-size: 1rem;
+  margin: 0.25rem 0;
+}
+
+.estimate-card .btn {
+  margin-top: 0.75rem;
   border-radius: 8px;
+  font-weight: 600;
+}
+
+/* Note text below columns */
+.text-center p.text-muted {
+  font-size: 0.95rem;
+  margin-top: 2rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .estimate-form,
+  .map-card {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .map-card {
+    margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .estimate-form,
+  .map-card,
+  .estimate-card {
+    padding: 1rem;
+  }
+
+  .estimate-card h5 {
+    font-size: 1.1rem;
+  }
+
+  .estimate-card p {
+    font-size: 0.95rem;
+  }
 }

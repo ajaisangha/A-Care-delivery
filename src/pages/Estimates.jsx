@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Autocomplete } from "@react-google-maps/api";
+import { Autocomplete, GoogleMap, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
 import { ZONES, RATES, VOLUME_DISCOUNTS } from "../rates";
 import { Link } from "react-router-dom";
 
 const BASE_ADDRESS = "378 Vogel Place, Waterloo, ON, Canada";
+const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"; // replace with your API key
 
 const getZoneIndex = (km) => {
   for (let i = 0; i < ZONES.length; i++) {
@@ -13,6 +14,11 @@ const getZoneIndex = (km) => {
 };
 
 export default function Estimates() {
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    libraries: ["places"]
+  });
+
   const [deliveryOption, setDeliveryOption] = useState("");
   const [serviceType, setServiceType] = useState("");
   const [serviceOption, setServiceOption] = useState("");
@@ -23,50 +29,25 @@ export default function Estimates() {
   const [estimate, setEstimate] = useState(null);
   const [distanceKm, setDistanceKm] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
-
+  const [directions, setDirections] = useState(null);
   const destinationRef = useRef(null);
   const pickupRef = useRef(null);
-  const mapRef = useRef(null);
-  const directionsRendererRef = useRef(null);
 
-  const initializeMap = () => {
-    if (!mapRef.current && window.google) {
-      mapRef.current = new window.google.maps.Map(document.getElementById("map"), {
-        center: { lat: 43.4683, lng: -80.5204 },
-        zoom: 12,
-      });
-    }
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (window.google && !mapRef.current) {
-        initializeMap();
-        clearInterval(interval);
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
+  const mapCenter = { lat: 43.4683, lng: -80.5204 };
 
   const getServiceOptions = () => {
     switch (serviceType) {
-      case "florist":
-        return ["Single Bouquet", "Premium Arrangement", "Multiple Deliveries", "Wedding/Event"];
-      case "pharmacy":
-        return ["Standard Delivery", "Scheduled Route", "Urgent Medication", "Temperature Controlled"];
-      case "retail":
-        return ["Small (<2kg)", "Medium (2–10kg)", "Large (10–20kg)", "Extra Large (20kg+)"];
-      case "sameday":
-        return ["Economy (by EOD)", "Standard (4-hour)", "Express (2-hour)", "Rush (1-hour)"];
-      default:
-        return [];
+      case "florist": return ["Single Bouquet", "Premium Arrangement", "Multiple Deliveries", "Wedding/Event"];
+      case "pharmacy": return ["Standard Delivery", "Scheduled Route", "Urgent Medication", "Temperature Controlled"];
+      case "retail": return ["Small (<2kg)", "Medium (2–10kg)", "Large (10–20kg)", "Extra Large (20kg+)"];
+      case "sameday": return ["Economy (by EOD)", "Standard (4-hour)", "Express (2-hour)", "Rush (1-hour)"];
+      default: return [];
     }
   };
 
   const validateFields = () => {
     if (!deliveryOption) return "Please select a delivery option.";
-    if (deliveryOption === "pickupDropOff" && pickup && !pickupAddress) return "Please enter pickup address.";
+    if (!pickup && deliveryOption === "pickupDropOff") return "Please enter pickup address.";
     if (!serviceType) return "Please select a service type.";
     if (!serviceOption) return "Please select an option for the service.";
     if (!quantity || quantity < 1) return "Please enter a valid quantity.";
@@ -74,17 +55,17 @@ export default function Estimates() {
     return null;
   };
 
-  const calculateRoute = async () => {
+  const calculateEstimate = async () => {
     const validationError = validateFields();
     if (validationError) {
       setErrorMsg(validationError);
       setEstimate(null);
+      setDistanceKm(null);
+      setDirections(null);
       return;
     }
 
     setErrorMsg("");
-    setLoading(true);
-
     try {
       const geocoder = new window.google.maps.Geocoder();
       const directionsService = new window.google.maps.DirectionsService();
@@ -102,46 +83,35 @@ export default function Estimates() {
         waypoints.push({ location: pickupLocation, stopover: true });
       }
 
-      const response = await new Promise((resolve, reject) => {
+      const result = await new Promise((resolve, reject) => {
         directionsService.route(
           {
             origin: baseLocation,
             destination: destLocation,
             waypoints,
-            travelMode: window.google.maps.TravelMode.DRIVING,
+            travelMode: window.google.maps.TravelMode.DRIVING
           },
-          (result, status) => {
-            if (status === "OK") resolve(result);
-            else reject(status);
-          }
+          (res, status) => (status === "OK" ? resolve(res) : reject(status))
         );
       });
 
-      if (!directionsRendererRef.current) {
-        directionsRendererRef.current = new window.google.maps.DirectionsRenderer();
-        directionsRendererRef.current.setMap(mapRef.current);
-      }
-      directionsRendererRef.current.setDirections(response);
+      setDirections(result);
 
       let km = 0;
-      response.routes[0].legs.forEach((leg) => (km += leg.distance.value));
-      km = km / 1000;
+      result.routes[0].legs.forEach((leg) => (km += leg.distance.value));
+      km /= 1000;
       setDistanceKm(km.toFixed(1));
 
       if (km > 200) {
         setEstimate(null);
         setErrorMsg("Distance exceeds 200 km. Please contact us for a quote.");
-        setLoading(false);
         return;
       }
 
       const zoneIndex = getZoneIndex(km);
-
-      let rateType = pickup ? "pickupDropOff" : "dropOffOnly";
-      let serviceRates = RATES[serviceType][rateType];
+      const rateType = pickup ? "pickupDropOff" : "dropOffOnly";
       const optionIndex = getServiceOptions().indexOf(serviceOption);
-      let baseRate = serviceRates[optionIndex];
-
+      const baseRate = RATES[serviceType][rateType][optionIndex];
       let totalRate = baseRate * quantity;
 
       const discount = VOLUME_DISCOUNTS.find((d) => quantity >= d.min && quantity <= d.max);
@@ -153,8 +123,7 @@ export default function Estimates() {
       setErrorMsg("Could not calculate distance. Please check addresses.");
       setEstimate(null);
       setDistanceKm(null);
-    } finally {
-      setLoading(false);
+      setDirections(null);
     }
   };
 
@@ -169,25 +138,20 @@ export default function Estimates() {
     setEstimate(null);
     setDistanceKm(null);
     setErrorMsg("");
-    if (destinationRef.current?.getPlace) {
-      destinationRef.current.set("place", null);
-      document.querySelector('input[placeholder="Enter destination"]').value = "";
-    }
-    if (pickupRef.current?.getPlace) {
-      pickupRef.current.set("place", null);
-      document.querySelector('input[placeholder="Enter pickup address"]').value = "";
-    }
-    if (directionsRendererRef.current) directionsRendererRef.current.setDirections({ routes: [] });
+    setDirections(null);
   };
+
+  if (loadError) return <div>Error loading Google Maps</div>;
+  if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
     <div className="container py-5">
       <h2 className="mb-4 text-center">Delivery Cost Estimator</h2>
 
-      <div className="row">
-        <div className="col-lg-6 mb-4">
-          <form onSubmit={(e) => e.preventDefault()} className="estimate-form card p-4 shadow-sm">
-            {/* Delivery Option */}
+      <div className="row justify-content-center">
+        {/* Form */}
+        <div className="col-lg-4 col-md-6 mb-4">
+          <form className="estimate-form card p-4 shadow-sm">
             <div className="mb-3">
               <label className="form-label fw-bold">Delivery Option</label>
               <select
@@ -204,17 +168,13 @@ export default function Estimates() {
               </select>
             </div>
 
-            {/* Service Type */}
             {deliveryOption && (
               <div className="mb-3">
                 <label className="form-label fw-bold">Service Type</label>
                 <select
                   className="form-select"
                   value={serviceType}
-                  onChange={(e) => {
-                    setServiceType(e.target.value);
-                    setServiceOption("");
-                  }}
+                  onChange={(e) => { setServiceType(e.target.value); setServiceOption(""); }}
                 >
                   <option value="">Select service</option>
                   <option value="florist">Florist Delivery</option>
@@ -225,7 +185,6 @@ export default function Estimates() {
               </div>
             )}
 
-            {/* Service Option */}
             {serviceType && (
               <div className="mb-3">
                 <label className="form-label fw-bold">Option</label>
@@ -235,16 +194,11 @@ export default function Estimates() {
                   onChange={(e) => setServiceOption(e.target.value)}
                 >
                   <option value="">Select option</option>
-                  {getServiceOptions().map((opt, i) => (
-                    <option key={i} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
+                  {getServiceOptions().map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
                 </select>
               </div>
             )}
 
-            {/* Quantity */}
             <div className="mb-3">
               <label className="form-label fw-bold">Quantity</label>
               <input
@@ -256,71 +210,59 @@ export default function Estimates() {
               />
             </div>
 
-            {/* Destination */}
             <div className="mb-3">
               <label className="form-label fw-bold">Destination Address</label>
               <Autocomplete
-                onLoad={(autocomplete) => (destinationRef.current = autocomplete)}
-                onPlaceChanged={() =>
-                  setDestination(destinationRef.current.getPlace()?.formatted_address || "")
-                }
+                onLoad={(ac) => (destinationRef.current = ac)}
+                onPlaceChanged={() => setDestination(destinationRef.current.getPlace()?.formatted_address || "")}
               >
                 <input type="text" className="form-control" placeholder="Enter destination" />
               </Autocomplete>
             </div>
 
-            {/* Pickup Address */}
             {pickup && (
               <div className="mb-3">
                 <label className="form-label fw-bold">Pickup Address</label>
                 <Autocomplete
-                  onLoad={(autocomplete) => (pickupRef.current = autocomplete)}
-                  onPlaceChanged={() =>
-                    setPickupAddress(pickupRef.current.getPlace()?.formatted_address || "")
-                  }
+                  onLoad={(ac) => (pickupRef.current = ac)}
+                  onPlaceChanged={() => setPickupAddress(pickupRef.current.getPlace()?.formatted_address || "")}
                 >
                   <input type="text" className="form-control" placeholder="Enter pickup address" />
                 </Autocomplete>
               </div>
             )}
 
-            <div className="d-flex flex-wrap gap-2 mt-3">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={calculateRoute}
-                disabled={loading}
-              >
-                {loading ? "Calculating..." : "Calculate Estimate"}
+            <div className="d-flex gap-2 mt-3">
+              <button type="button" className="btn btn-primary flex-grow-1" onClick={calculateEstimate}>
+                Calculate
               </button>
-              <button type="button" className="btn btn-secondary" onClick={handleClear}>
+              <button type="button" className="btn btn-secondary flex-grow-1" onClick={handleClear}>
                 Clear
               </button>
-              <Link to="/booking" className="btn btn-success">
-                Book Now
-              </Link>
             </div>
           </form>
         </div>
 
-        <div className="col-lg-6">
+        {/* Map & Result */}
+        <div className="col-lg-6 col-md-12">
+          <div className="map-card card shadow-sm">
+            <GoogleMap mapContainerStyle={{ width: "100%", height: "400px", borderRadius: "12px" }} center={mapCenter} zoom={12}>
+              {directions && <DirectionsRenderer directions={directions} />}
+            </GoogleMap>
+          </div>
+
           {estimate && distanceKm && (
-            <div className="estimate-card card p-4 shadow-sm mb-3">
+            <div className="estimate-card card p-4 shadow-sm text-center mt-3">
               <h5>Estimate Details</h5>
-              <p>
-                <strong>Estimated Cost: </strong>${estimate}
-              </p>
-              <p>
-                <strong>Distance: </strong>{distanceKm} km
-              </p>
+              <p><strong>Cost: </strong>${estimate}</p>
+              <p><strong>Distance: </strong>{distanceKm} km</p>
+              <p className="mt-3 fw-semibold">If you like the estimate:</p>
+              <Link to="/booking" className="btn btn-success">Book Now</Link>
             </div>
           )}
-
-          <div id="map" className="map-card card shadow-sm"></div>
         </div>
       </div>
 
-      {/* Centered note */}
       <div className="text-center mt-4">
         <p className="text-muted fw-semibold">
           Note: Estimated cost does not include taxes, discounts, or any additional charges.
