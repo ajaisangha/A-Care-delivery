@@ -1,16 +1,106 @@
-# React + Vite
+### A+ Care Delivery
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📍 Service Zones from Our Vogel Place Office
 
-Currently, two official plugins are available:
+| Zone | Distance | Areas Covered |
+|------|-----------|----------------|
+| **Zone 1** | 0–5 km | Uptown Waterloo, University District, Laurelwood, Beechwood |
+| **Zone 2** | 5–10 km | Central Kitchener, Boardwalk, Conestoga Mall area |
+| **Zone 3** | 10–15 km | Cambridge, St. Jacobs, Erb Village |
+| **Zone 4A** | 15–50 km | Guelph, Elmira, New Hamburg, Ayr, Baden |
+| **Zone 4B** | 50–100 km | Hamilton, Brantford, Woodstock |
+| **Zone 4C** | 100–200 km | Toronto (GTA), London, Niagara Region |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🏵️ Florist Delivery Services
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### FULL SERVICE — Pickup from your shop & deliver to customer
 
-## Expanding the ESLint configuration
+| Service Type | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
+|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Single Bouquet | $14 | $18 | $22 | $28 | $38 | $55 |
+| Premium Arrangement | $18 | $22 | $26 | $32 | $45 | $65 |
+| Multiple Deliveries | $25 | $32 | $40 | $50 | $70 | $100 |
+| Wedding/Event | $45+ | $55+ | $65+ | $85+ | $120+ | $180+ |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### DROP-OFF SERVICE — You bring to our office at 378 Vogel Pl
+
+| Service Type | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
+|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Single Bouquet | $12 | $15 | $19 | $24 | $32 | $47 |
+| Premium Arrangement | $15 | $19 | $22 | $27 | $38 | $55 |
+| Multiple Deliveries | $21 | $27 | $34 | $43 | $60 | $85 |
+| Wedding/Event | $38+ | $47+ | $55+ | $72+ | $102+ | $153+ |
+
+---
+
+## 💊 Pharmacy Prescription Delivery
+
+### FULL SERVICE — Pickup from pharmacy & deliver to patient
+
+| Service Type | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
+|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Standard Delivery | $9 | $12 | $15 | $20 | $28 | $42 |
+| Scheduled Route | $7/delivery | $9/delivery | $12/delivery | $16/delivery | $22/delivery | $35/delivery |
+| Urgent Medication | $18 | $22 | $28 | $38 | $52 | $75 |
+| Temperature Controlled | +$3 | +$3 | +$4 | +$5 | +$6 | +$8 |
+
+### DROP-OFF SERVICE — You bring to our office at 378 Vogel Pl
+
+| Service Type | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
+|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Standard Delivery | $8 | $10 | $13 | $17 | $24 | $36 |
+| Scheduled Route | $6/delivery | $8/delivery | $10/delivery | $14/delivery | $19/delivery | $30/delivery |
+| Urgent Medication | $15 | $19 | $24 | $32 | $44 | $64 |
+| Temperature Controlled | +$3 | +$3 | +$4 | +$5 | +$6 | +$8 |
+
+---
+
+## 📦 Retail & Parcel Delivery
+
+### FULL SERVICE — Pickup from your store & deliver to customer
+
+| Package Size | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
+|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Small (<2kg) | $13 | $17 | $21 | $27 | $37 | $52 |
+| Medium (2–10kg) | $17 | $22 | $27 | $35 | $48 | $68 |
+| Large (10–20kg) | $24 | $30 | $36 | $47 | $65 | $92 |
+| Extra Large (20kg+) | Quote | Quote | Quote | Quote | Quote | Quote |
+
+### DROP-OFF SERVICE — You bring to our office at 378 Vogel Pl
+
+| Package Size | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
+|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Small (<2kg) | $11 | $14 | $18 | $23 | $31 | $44 |
+| Medium (2–10kg) | $14 | $19 | $23 | $30 | $41 | $58 |
+| Large (10–20kg) | $20 | $26 | $31 | $40 | $55 | $78 |
+| Extra Large (20kg+) | Quote | Quote | Quote | Quote | Quote | Quote |
+
+---
+
+## ⚡ Same-Day Delivery Services
+
+### FULL SERVICE — Pickup from your location & deliver immediately
+
+| Service Level | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
+|----------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Economy (by EOD) | $11 | $14 | $17 | $22 | $30 | $45 |
+| Standard (4-hour) | $16 | $20 | $24 | $32 | $44 | $65 |
+| Express (2-hour) | $25 | $30 | $35 | $45 | $62 | $90 |
+| Rush (1-hour) | $35 | $42 | $49 | $65 | $85 | $120 |
+
+### DROP-OFF SERVICE — You bring to our office at 378 Vogel Pl
+
+| Service Level | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
+|----------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Economy (by EOD) | $9 | $12 | $14 | $19 | $26 | $38 |
+| Standard (4-hour) | $14 | $17 | $20 | $27 | $37 | $55 |
+| Express (2-hour) | $21 | $26 | $30 | $38 | $53 | $77 |
+| Rush (1-hour) | $30 | $36 | $42 | $55 | $72 | $102 |
+
+---
+
+**A+ Care Delivery**  
+📍 378 Vogel Pl, Waterloo, ON  
+📞 Professional Pickup & Delivery Services | Reliable | Local | Fast
