@@ -6,6 +6,7 @@ import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import Rates from "./pages/Rates";
 import Estimates from "./pages/Estimates";
+import Booking from "./pages/Booking";
 import "./App.css";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/rates" element={<Rates />} />
           <Route path="/estimates" element={<Estimates />} />
+          <Route path="/booking" element={<Booking />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>

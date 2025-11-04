@@ -66,9 +66,10 @@ export default function Services() {
       {services.map((service, index) => (
         <div
           key={index}
-          className={`row align-items-center mb-5 service-block ${
+          className={`row align-items-center mb-5 service-block p-3 rounded shadow-sm ${
             index % 2 !== 0 ? "flex-row-reverse" : ""
           }`}
+          style={{ backgroundColor: "#fefefe" }}
         >
           <div className="col-md-6 mb-4 mb-md-0">
             <img
@@ -92,9 +93,14 @@ export default function Services() {
                 </li>
               ))}
             </ul>
-            <Link to="/estimates" className="btn btn-primary">
-              Get Estimate
-            </Link>
+            <div className="mt-4 d-flex gap-2">
+              <Link to="/estimates" className="btn btn-primary flex-grow-1">
+                Get Estimate
+              </Link>
+              <Link to="/booking" className="btn btn-secondary flex-grow-1">
+                Book Service
+              </Link>
+            </div>
           </div>
         </div>
       ))}

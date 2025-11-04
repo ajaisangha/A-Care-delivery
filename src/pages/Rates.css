@@ -1,0 +1,48 @@
+.rates-page {
+  min-height: calc(100vh - 160px); /* navbar + footer */
+}
+
+.rate-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.rate-card:hover {
+  transform: translateY(-2px);
+}
+
+.rate-card .card-title {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  text-align: center;
+}
+
+h5 {
+  color: #333;
+  font-weight: 600;
+}
+
+.table thead th {
+  vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f8f9fa;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .rate-card {
+    padding: 1rem;
+  }
+
+  .table thead th,
+  .table tbody td {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+}

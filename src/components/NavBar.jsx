@@ -41,6 +41,11 @@ export default function NavBar() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink to="/booking" className="nav-link">
+                Booking
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink to="/contact" className="nav-link">
                 Contact
               </NavLink>
