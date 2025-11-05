@@ -262,24 +262,26 @@ export default function Estimates() {
 
         {/* Map & Result */}
         <div className="col-lg-6 col-md-12">
+          
+          {estimate && distanceKm && (
+            <div id="estimate-result" className="estimate-card card p-3 shadow-sm text-center">
+              <h5 className="mb-3">Estimate Details</h5>
+              <div className="estimate-item"><FaDollarSign className="icon" /> <span>Cost: ${estimate}</span></div>
+              <div className="estimate-item"><FaRoute className="icon" /> <span>Distance: {distanceKm} km</span></div>
+              {discountApplied && (
+                <div className="estimate-item"><FaTags className="icon" /> <span>Discount: {discountApplied}%</span></div>
+              )}
+              <div className="d-flex justify-content-center mt-3">
+                <Link to="/booking" className="btn btn-success estimate-btn">Book Now</Link>
+              </div>
+            </div>
+          )}
+
           <div className="map-card card shadow-sm">
             <GoogleMap mapContainerStyle={{ width: "100%", height: "400px", borderRadius: "12px" }} center={mapCenter} zoom={12}>
               {directions && <DirectionsRenderer directions={directions} />}
             </GoogleMap>
           </div>
-
-          {estimate && distanceKm && (
-            <div id="estimate-result" className="estimate-card card p-4 shadow-sm mt-3 text-center">
-              <h5>Estimate Details</h5>
-              <div className="estimate-item"><FaDollarSign className="icon" /> <span>Cost: ${estimate}</span></div>
-              <div className="estimate-item"><FaRoute className="icon" /> <span>Distance: {distanceKm} km</span></div>
-              {discountApplied && (
-                <div className="estimate-item"><FaTags className="icon" /> <span>Discount Applied: {discountApplied}%</span></div>
-              )}
-              <p className="mt-3 fw-semibold">If you like the estimate:</p>
-              <Link to="/booking" className="btn btn-success">Book Now</Link>
-            </div>
-          )}
         </div>
       </div>
 
