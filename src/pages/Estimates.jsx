@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Autocomplete, GoogleMap, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
 import { ZONES, RATES, VOLUME_DISCOUNTS } from "../rates";
 import { Link } from "react-router-dom";
+import { FaDollarSign, FaRoute, FaTags } from "react-icons/fa";
+import "./Estimates.css";
 
 const BASE_ADDRESS = "378 Vogel Place, Waterloo, ON, Canada";
 const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"; // replace with your API key
@@ -16,7 +18,7 @@ const getZoneIndex = (km) => {
 export default function Estimates() {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
+    libraries: ["places"]
   });
 
   const [deliveryOption, setDeliveryOption] = useState("");
@@ -28,33 +30,27 @@ export default function Estimates() {
   const [pickupAddress, setPickupAddress] = useState("");
   const [estimate, setEstimate] = useState(null);
   const [distanceKm, setDistanceKm] = useState(null);
+  const [discountApplied, setDiscountApplied] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [directions, setDirections] = useState(null);
   const destinationRef = useRef(null);
   const pickupRef = useRef(null);
-  const resultRef = useRef(null);
 
   const mapCenter = { lat: 43.4683, lng: -80.5204 };
 
   const getServiceOptions = () => {
     switch (serviceType) {
-      case "florist":
-        return ["Single Bouquet", "Premium Arrangement", "Multiple Deliveries", "Wedding/Event"];
-      case "pharmacy":
-        return ["Standard Delivery", "Scheduled Route", "Urgent Medication", "Temperature Controlled"];
-      case "retail":
-        return ["Small (<2kg)", "Medium (2–10kg)", "Large (10–20kg)", "Extra Large (20kg+)"];
-      case "sameday":
-        return ["Economy (by EOD)", "Standard (4-hour)", "Express (2-hour)", "Rush (1-hour)"];
-      default:
-        return [];
+      case "florist": return ["Single Bouquet", "Premium Arrangement", "Multiple Deliveries", "Wedding/Event"];
+      case "pharmacy": return ["Standard Delivery", "Scheduled Route", "Urgent Medication", "Temperature Controlled"];
+      case "retail": return ["Small (<2kg)", "Medium (2–10kg)", "Large (10–20kg)", "Extra Large (20kg+)"];
+      case "sameday": return ["Economy (by EOD)", "Standard (4-hour)", "Express (2-hour)", "Rush (1-hour)"];
+      default: return [];
     }
   };
 
   const validateFields = () => {
     if (!deliveryOption) return "Please select a delivery option.";
-    if (deliveryOption === "pickupDropOff" && !pickupAddress)
-      return "Please enter a pickup address for Pickup & Drop-Off service.";
+    if (pickup && !pickupAddress) return "Please enter pickup address.";
     if (!serviceType) return "Please select a service type.";
     if (!serviceOption) return "Please select an option for the service.";
     if (!quantity || quantity < 1) return "Please enter a valid quantity.";
@@ -68,6 +64,7 @@ export default function Estimates() {
       setErrorMsg(validationError);
       setEstimate(null);
       setDistanceKm(null);
+      setDiscountApplied(null);
       setDirections(null);
       return;
     }
@@ -96,7 +93,7 @@ export default function Estimates() {
             origin: baseLocation,
             destination: destLocation,
             waypoints,
-            travelMode: window.google.maps.TravelMode.DRIVING,
+            travelMode: window.google.maps.TravelMode.DRIVING
           },
           (res, status) => (status === "OK" ? resolve(res) : reject(status))
         );
@@ -121,20 +118,27 @@ export default function Estimates() {
       const baseRate = RATES[serviceType][rateType][optionIndex];
       let totalRate = baseRate * quantity;
 
-      const discount = VOLUME_DISCOUNTS.find((d) => quantity >= d.min && quantity <= d.max);
-      if (discount) totalRate *= 1 - discount.discount;
+      // Apply volume discount
+      let appliedDiscount = null;
+      if (quantity >= 50) appliedDiscount = 0.2;
+      else if (quantity >= 20) appliedDiscount = 0.15;
+      else if (quantity >= 10) appliedDiscount = 0.1;
+
+      if (appliedDiscount) {
+        totalRate *= 1 - appliedDiscount;
+        setDiscountApplied(appliedDiscount * 100);
+      } else setDiscountApplied(null);
 
       setEstimate(totalRate.toFixed(2));
 
-      // Scroll to result after calculation
-      setTimeout(() => {
-        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 300);
+      // Scroll to result
+      document.getElementById("estimate-result")?.scrollIntoView({ behavior: "smooth" });
     } catch (err) {
       console.error(err);
       setErrorMsg("Could not calculate distance. Please check addresses.");
       setEstimate(null);
       setDistanceKm(null);
+      setDiscountApplied(null);
       setDirections(null);
     }
   };
@@ -149,6 +153,7 @@ export default function Estimates() {
     setPickupAddress("");
     setEstimate(null);
     setDistanceKm(null);
+    setDiscountApplied(null);
     setErrorMsg("");
     setDirections(null);
   };
@@ -186,10 +191,7 @@ export default function Estimates() {
                 <select
                   className="form-select"
                   value={serviceType}
-                  onChange={(e) => {
-                    setServiceType(e.target.value);
-                    setServiceOption("");
-                  }}
+                  onChange={(e) => { setServiceType(e.target.value); setServiceOption(""); }}
                 >
                   <option value="">Select service</option>
                   <option value="florist">Florist Delivery</option>
@@ -209,11 +211,7 @@ export default function Estimates() {
                   onChange={(e) => setServiceOption(e.target.value)}
                 >
                   <option value="">Select option</option>
-                  {getServiceOptions().map((opt, i) => (
-                    <option key={i} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
+                  {getServiceOptions().map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
                 </select>
               </div>
             )}
@@ -233,9 +231,7 @@ export default function Estimates() {
               <label className="form-label fw-bold">Destination Address</label>
               <Autocomplete
                 onLoad={(ac) => (destinationRef.current = ac)}
-                onPlaceChanged={() =>
-                  setDestination(destinationRef.current.getPlace()?.formatted_address || "")
-                }
+                onPlaceChanged={() => setDestination(destinationRef.current.getPlace()?.formatted_address || "")}
               >
                 <input type="text" className="form-control" placeholder="Enter destination" />
               </Autocomplete>
@@ -246,9 +242,7 @@ export default function Estimates() {
                 <label className="form-label fw-bold">Pickup Address</label>
                 <Autocomplete
                   onLoad={(ac) => (pickupRef.current = ac)}
-                  onPlaceChanged={() =>
-                    setPickupAddress(pickupRef.current.getPlace()?.formatted_address || "")
-                  }
+                  onPlaceChanged={() => setPickupAddress(pickupRef.current.getPlace()?.formatted_address || "")}
                 >
                   <input type="text" className="form-control" placeholder="Enter pickup address" />
                 </Autocomplete>
@@ -256,61 +250,42 @@ export default function Estimates() {
             )}
 
             <div className="d-flex gap-2 mt-3">
-              <button
-                type="button"
-                className="btn btn-primary flex-grow-1"
-                onClick={calculateEstimate}
-              >
+              <button type="button" className="btn btn-primary flex-grow-1" onClick={calculateEstimate}>
                 Calculate
               </button>
-              <button
-                type="button"
-                className="btn btn-secondary flex-grow-1"
-                onClick={handleClear}
-              >
+              <button type="button" className="btn btn-secondary flex-grow-1" onClick={handleClear}>
                 Clear
               </button>
             </div>
           </form>
         </div>
 
-        {/* Map + Result */}
+        {/* Map & Result */}
         <div className="col-lg-6 col-md-12">
-          {estimate && distanceKm && (
-            <div ref={resultRef} className="estimate-card card p-4 shadow-sm text-center mb-3">
-              <h5>Estimate Details</h5>
-              <p>
-                <strong>Cost:</strong> ${estimate}
-              </p>
-              <p>
-                <strong>Distance:</strong> {distanceKm} km
-              </p>
-              <p className="mt-3 fw-semibold">If you like the estimate:</p>
-              <Link to="/booking" className="btn btn-success">
-                Book Now
-              </Link>
-            </div>
-          )}
-
           <div className="map-card card shadow-sm">
-            <GoogleMap
-              mapContainerStyle={{
-                width: "100%",
-                height: "400px",
-                borderRadius: "12px",
-              }}
-              center={mapCenter}
-              zoom={12}
-            >
+            <GoogleMap mapContainerStyle={{ width: "100%", height: "400px", borderRadius: "12px" }} center={mapCenter} zoom={12}>
               {directions && <DirectionsRenderer directions={directions} />}
             </GoogleMap>
           </div>
+
+          {estimate && distanceKm && (
+            <div id="estimate-result" className="estimate-card card p-4 shadow-sm mt-3 text-center">
+              <h5>Estimate Details</h5>
+              <div className="estimate-item"><FaDollarSign className="icon" /> <span>Cost: ${estimate}</span></div>
+              <div className="estimate-item"><FaRoute className="icon" /> <span>Distance: {distanceKm} km</span></div>
+              {discountApplied && (
+                <div className="estimate-item"><FaTags className="icon" /> <span>Discount Applied: {discountApplied}%</span></div>
+              )}
+              <p className="mt-3 fw-semibold">If you like the estimate:</p>
+              <Link to="/booking" className="btn btn-success">Book Now</Link>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="text-center mt-4">
         <p className="text-muted fw-semibold">
-          Note: Estimated cost does not include taxes, discounts, or any additional charges.
+          Estimated cost does not include taxes, discounts, or any additional charges.
         </p>
       </div>
 

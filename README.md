@@ -99,6 +99,14 @@
 | Express (2-hour) | $21 | $26 | $30 | $38 | $53 | $77 |
 | Rush (1-hour) | $30 | $36 | $42 | $55 | $72 | $102 |
 
+
+## Discount
+    10+ deliveries: 10% discount
+
+    20+ deliveries: 15% discount
+
+    50+ deliveries: 20% discount
+
 ---
 
 **A+ Care Delivery**  
