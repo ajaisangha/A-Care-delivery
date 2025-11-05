@@ -1,113 +1,126 @@
-/* General page container adjustments */
-.container.py-5 {
+/* General Container */
+.container {
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
 /* Form Card */
 .estimate-form {
-  background: #fff;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 1.5rem;
-  transition: all 0.3s ease-in-out;
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.estimate-form:hover {
+  transform: translateY(-3px);
 }
 
 .estimate-form .form-label {
   font-weight: 600;
-  color: #333;
 }
 
-.estimate-form select,
-.estimate-form input {
+.estimate-form .form-select,
+.estimate-form .form-control {
   border-radius: 8px;
-  border: 1px solid #ccc;
-  padding: 0.5rem 0.75rem;
-  transition: border-color 0.3s;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
 }
 
-.estimate-form select:focus,
-.estimate-form input:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-  outline: none;
-}
-
-/* Button spacing */
 .estimate-form .d-flex.gap-2 button {
-  flex: 1;
+  border-radius: 8px;
+  font-weight: 600;
 }
 
 /* Map Card */
 .map-card {
-  margin-left: 0;
-  background: #fff;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 0.5rem;
-  min-height: 400px;
-  transition: all 0.3s ease-in-out;
+  margin-left: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  height: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Estimate Result Card */
 .estimate-card {
-  background: #fff;
+  background-color: #f9f9f9;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 1rem 1.5rem;
+  padding: 1.5rem 2rem;
   margin-top: 1rem;
-  transition: all 0.3s ease-in-out;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 .estimate-card h5 {
-  font-weight: 600;
-  color: #0d6efd;
-  margin-bottom: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
 .estimate-card p {
   font-size: 1rem;
-  margin: 0.25rem 0;
+  margin-bottom: 0.3rem;
 }
 
-.estimate-card .btn {
-  margin-top: 0.75rem;
+.estimate-card .btn-success {
+  margin-top: 1rem;
   border-radius: 8px;
+  padding: 0.5rem 1.25rem;
   font-weight: 600;
 }
 
-/* Note text below columns */
-.text-center p.text-muted {
+/* Note below cards */
+.container > .text-center.mt-4 {
+  margin-top: 2.5rem;
   font-size: 0.95rem;
-  margin-top: 2rem;
+  color: #6c757d;
   font-weight: 500;
 }
 
 /* Responsive adjustments */
-@media (max-width: 991px) {
-  .estimate-form,
+@media (max-width: 992px) {
   .map-card {
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 0;
+    margin-top: 1.5rem;
+    height: 350px;
   }
 
-  .map-card {
-    margin-top: 1.5rem;
+  .estimate-form {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 450px;
   }
 }
 
-@media (max-width: 575px) {
-  .estimate-form,
-  .map-card,
+@media (max-width: 768px) {
+  .map-card {
+    height: 300px;
+  }
+
+  .estimate-card {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .estimate-form {
+    padding: 1.5rem 1rem;
+  }
+
   .estimate-card {
     padding: 1rem;
   }
 
-  .estimate-card h5 {
-    font-size: 1.1rem;
+  .d-flex.gap-2 {
+    flex-direction: column;
   }
 
-  .estimate-card p {
-    font-size: 0.95rem;
+  .d-flex.gap-2 button {
+    width: 100%;
   }
 }
