@@ -3,7 +3,6 @@ import { Autocomplete, GoogleMap, DirectionsRenderer, useJsApiLoader } from "@re
 import { ZONES, RATES, VOLUME_DISCOUNTS } from "../rates";
 import { Link } from "react-router-dom";
 import { FaDollarSign, FaRoute, FaTags } from "react-icons/fa";
-import "./Estimates.css";
 
 const BASE_ADDRESS = "378 Vogel Place, Waterloo, ON, Canada";
 const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"; // replace with your API key
@@ -33,8 +32,11 @@ export default function Estimates() {
   const [discountApplied, setDiscountApplied] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [directions, setDirections] = useState(null);
+  const [animateKey, setAnimateKey] = useState(0); // for animation
+
   const destinationRef = useRef(null);
   const pickupRef = useRef(null);
+  const resultRef = useRef(null);
 
   const mapCenter = { lat: 43.4683, lng: -80.5204 };
 
@@ -64,7 +66,6 @@ export default function Estimates() {
       setErrorMsg(validationError);
       setEstimate(null);
       setDistanceKm(null);
-      setDiscountApplied(null);
       setDirections(null);
       return;
     }
@@ -118,27 +119,24 @@ export default function Estimates() {
       const baseRate = RATES[serviceType][rateType][optionIndex];
       let totalRate = baseRate * quantity;
 
-      // Apply volume discount
-      let appliedDiscount = null;
-      if (quantity >= 50) appliedDiscount = 0.2;
-      else if (quantity >= 20) appliedDiscount = 0.15;
-      else if (quantity >= 10) appliedDiscount = 0.1;
+      let discount = 0;
+      if (quantity >= 50) discount = 20;
+      else if (quantity >= 20) discount = 15;
+      else if (quantity >= 10) discount = 10;
 
-      if (appliedDiscount) {
-        totalRate *= 1 - appliedDiscount;
-        setDiscountApplied(appliedDiscount * 100);
-      } else setDiscountApplied(null);
+      setDiscountApplied(discount);
+      totalRate *= 1 - discount / 100;
 
       setEstimate(totalRate.toFixed(2));
+      setAnimateKey((prev) => prev + 1); // trigger animation
 
-      // Scroll to result
-      document.getElementById("estimate-result")?.scrollIntoView({ behavior: "smooth" });
+      // Scroll to result card
+      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     } catch (err) {
       console.error(err);
       setErrorMsg("Could not calculate distance. Please check addresses.");
       setEstimate(null);
       setDistanceKm(null);
-      setDiscountApplied(null);
       setDirections(null);
     }
   };
@@ -165,8 +163,8 @@ export default function Estimates() {
     <div className="container py-5">
       <h2 className="mb-4 text-center">Delivery Cost Estimator</h2>
 
-      <div className="row justify-content-center">
-        {/* Form */}
+      <div className="row gx-4">
+        {/* Left Column: Form */}
         <div className="col-lg-4 col-md-6 mb-4">
           <form className="estimate-form card p-4 shadow-sm">
             <div className="mb-3">
@@ -260,27 +258,30 @@ export default function Estimates() {
           </form>
         </div>
 
-        {/* Map & Result */}
-        <div className="col-lg-6 col-md-12">
-          
-          {estimate && distanceKm && (
-            <div id="estimate-result" className="estimate-card card p-3 shadow-sm text-center">
-              <h5 className="mb-3">Estimate Details</h5>
-              <div className="estimate-item"><FaDollarSign className="icon" /> <span>Cost: ${estimate}</span></div>
-              <div className="estimate-item"><FaRoute className="icon" /> <span>Distance: {distanceKm} km</span></div>
-              {discountApplied && (
-                <div className="estimate-item"><FaTags className="icon" /> <span>Discount: {discountApplied}%</span></div>
-              )}
-              <div className="d-flex justify-content-center mt-3">
-                <Link to="/booking" className="btn btn-success estimate-btn">Book Now</Link>
-              </div>
-            </div>
-          )}
-
+        {/* Right Column: Map & Result */}
+        <div className="col-lg-8 col-md-12 position-relative">
           <div className="map-card card shadow-sm">
-            <GoogleMap mapContainerStyle={{ width: "100%", height: "400px", borderRadius: "12px" }} center={mapCenter} zoom={12}>
+            <GoogleMap mapContainerStyle={{ width: "100%", height: "450px", borderRadius: "12px" }} center={mapCenter} zoom={12}>
               {directions && <DirectionsRenderer directions={directions} />}
             </GoogleMap>
+
+            {estimate && distanceKm && (
+              <div
+                key={animateKey}
+                ref={resultRef}
+                className="estimate-card card p-3 shadow-sm text-center position-absolute top-0 start-50 translate-middle-x animate-popup"
+              >
+                <h5 className="mb-3">Estimate Details</h5>
+                <div className="estimate-item"><FaDollarSign className="icon" /> <span>Cost: ${estimate}</span></div>
+                <div className="estimate-item"><FaRoute className="icon" /> <span>Distance: {distanceKm} km</span></div>
+                {discountApplied && (
+                  <div className="estimate-item"><FaTags className="icon" /> <span>Discount: {discountApplied}%</span></div>
+                )}
+                <div className="d-flex justify-content-center mt-3">
+                  <Link to="/booking" className="btn btn-success estimate-btn">Book Now</Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
