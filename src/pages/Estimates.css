@@ -1,85 +1,121 @@
-.estimate-form {
-  max-width: 100%;
-  border-radius: 12px;
-  transition: all 0.3s ease;
+/* General container spacing */
+.container {
+  max-width: 1200px;
 }
 
+/* Form card */
+.estimate-form {
+  background: #fff;
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.estimate-form:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Map card */
 .map-card {
   position: relative;
-  margin-top: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
 }
 
+.map-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Result card floating on top of map */
 .estimate-card {
-  max-width: 320px;
-  width: 90%;
-  border-radius: 12px;
-  padding: 20px 15px;
-  background: linear-gradient(145deg, #ffffff, #f7f7f7);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+  transition: all 0.4s ease;
   z-index: 10;
 }
 
+/* Popup animation when new estimate calculated */
+.animate-popup {
+  transform: scale(0.95);
+  opacity: 0;
+  animation: popup 0.35s forwards;
+}
+
+@keyframes popup {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Result card content styling */
 .estimate-card h5 {
-  font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
 .estimate-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  margin-bottom: 0.6rem;
   font-weight: 500;
-  margin: 6px 0;
-  font-size: 0.95rem;
+  color: #444;
 }
 
 .estimate-item .icon {
   color: #0d6efd;
+  margin-right: 8px;
   font-size: 1.1rem;
 }
 
+/* Book Now button inside result card */
 .estimate-btn {
-  padding: 8px 20px;
-  font-size: 1rem;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  width: 120px;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .estimate-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-.animate-popup {
-  animation: popup 0.4s ease forwards;
-}
-
-@keyframes popup {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -10%) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
   .estimate-card {
-    max-width: 90%;
-    position: relative;
-    transform: none !important;
-    margin: 20px auto 0 auto;
+    width: 90%;
+    left: 5%;
+    top: 1rem;
   }
 }
 
-@media (max-width: 576px) {
-  .estimate-card { padding: 15px 10px; }
-  .estimate-item { font-size: 0.85rem; gap: 6px; }
-  .estimate-btn { width: 70%; font-size: 0.9rem; padding: 6px 0; }
+@media (max-width: 768px) {
+  .estimate-form {
+    max-width: 100%;
+  }
+
+  .map-card {
+    margin-top: 2rem;
+  }
+
+  .estimate-card {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 1rem;
+  }
 }
