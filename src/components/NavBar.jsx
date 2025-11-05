@@ -42,7 +42,7 @@ export default function NavBar() {
             </li>
             <li className="nav-item">
               <NavLink to="/booking" className="nav-link">
-                Booking
+                Book
               </NavLink>
             </li>
             <li className="nav-item">
