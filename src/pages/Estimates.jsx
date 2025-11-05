@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Autocomplete, GoogleMap, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
+import { Autocomplete, GoogleMap, DirectionsRenderer, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { ZONES, RATES, VOLUME_DISCOUNTS } from "../rates";
 import { Link } from "react-router-dom";
-import { FaDollarSign, FaRoad, FaGift } from "react-icons/fa";
-import "./Estimates.css";
 
 const BASE_ADDRESS = "378 Vogel Place, Waterloo, ON, Canada";
-const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"; // replace with your API key
+const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"; // replace with your key
 
 const getZoneIndex = (km) => {
   for (let i = 0; i < ZONES.length; i++) {
@@ -33,7 +31,7 @@ export default function Estimates() {
   const [discountApplied, setDiscountApplied] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [directions, setDirections] = useState(null);
-  const [animateResult, setAnimateResult] = useState(false);
+  const [markerPos, setMarkerPos] = useState(null);
 
   const destinationRef = useRef(null);
   const pickupRef = useRef(null);
@@ -56,7 +54,7 @@ export default function Estimates() {
     if (!serviceOption) return "Please select an option for the service.";
     if (!quantity || quantity < 1) return "Please enter a valid quantity.";
     if (!destination) return "Please enter the destination address.";
-    if (deliveryOption === "pickupDropOff" && (!pickupAddress || pickupAddress.trim() === "")) return "Please enter pickup address.";
+    if (pickup && !pickupAddress) return "Please enter a pickup address.";
     return null;
   };
 
@@ -66,130 +64,118 @@ export default function Estimates() {
       setErrorMsg(validationError);
       setEstimate(null);
       setDistanceKm(null);
-      setDiscountApplied(null);
       setDirections(null);
+      setMarkerPos(null);
       return;
     }
 
     setErrorMsg("");
+    setDirections(null);
+    setMarkerPos(null);
+    setEstimate(null);
+    setDistanceKm(null);
+    setDiscountApplied(null);
+
     try {
       const geocoder = new window.google.maps.Geocoder();
       const directionsService = new window.google.maps.DirectionsService();
 
       const destResults = await geocoder.geocode({ address: destination });
+      if (!destResults.results[0]) throw new Error("Destination not found");
       const destLocation = destResults.results[0].geometry.location;
 
-      let waypoints = [];
-      let origin = null;
+      let km = 0;
 
-      if (deliveryOption === "pickupDropOff" && pickupAddress) {
+      if (deliveryOption === "dropOffOnly" || !pickup) {
+        // Drop-Off Only: just show destination marker
+        setMarkerPos(destLocation);
+        km = 0; // can't calculate route from base in this mode
+        setDistanceKm("N/A");
+      } else {
+        // Pickup & Drop-Off: calculate route from pickup to destination
         const pickupResults = await geocoder.geocode({ address: pickupAddress });
         const pickupLocation = pickupResults.results[0].geometry.location;
-        waypoints.push({ location: pickupLocation, stopover: true });
-        origin = pickupLocation;
-      } else {
-        origin = destLocation; // drop-off only
-      }
 
-      const result = deliveryOption === "pickupDropOff" ? 
-        await new Promise((resolve, reject) => {
+        const result = await new Promise((resolve, reject) => {
           directionsService.route(
             {
-              origin,
+              origin: pickupLocation,
               destination: destLocation,
               travelMode: window.google.maps.TravelMode.DRIVING
             },
             (res, status) => (status === "OK" ? resolve(res) : reject(status))
           );
-        }) : null;
+        });
 
-      setDirections(result);
+        setDirections(result);
 
-      let km = 0;
-      if (result) {
-        result.routes[0].legs.forEach((leg) => (km += leg.distance.value));
+        km = 0;
+        result.routes[0].legs.forEach(leg => (km += leg.distance.value));
         km /= 1000;
-      } else {
-        km = 1; // dummy minimal distance for drop-off only
+        setDistanceKm(km.toFixed(1));
       }
 
-      setDistanceKm(km.toFixed(1));
-
-      if (km > 200) {
-        setEstimate(null);
-        setErrorMsg("Distance exceeds 200 km. Please contact us for a quote.");
-        return;
-      }
-
-      const zoneIndex = getZoneIndex(km);
-      const rateType = pickup ? "pickupDropOff" : "dropOffOnly";
+      // Estimate calculation
+      let rateType = pickup ? "pickupDropOff" : "dropOffOnly";
       const optionIndex = getServiceOptions().indexOf(serviceOption);
-      const baseRate = RATES[serviceType][rateType][optionIndex];
+      const baseRate = RATES[serviceType][rateType][optionIndex] || 0;
+
       let totalRate = baseRate * quantity;
 
-      // Calculate discount
-      let discountPercent = 0;
-      if (quantity >= 50) discountPercent = 0.2;
-      else if (quantity >= 20) discountPercent = 0.15;
-      else if (quantity >= 10) discountPercent = 0.1;
-
-      setDiscountApplied(discountPercent * 100);
-      totalRate *= (1 - discountPercent);
+      // Apply volume discount
+      let discount = "";
+      if (quantity >= 50) {
+        totalRate *= 0.8;
+        discount = "20%";
+      } else if (quantity >= 20) {
+        totalRate *= 0.85;
+        discount = "15%";
+      } else if (quantity >= 10) {
+        totalRate *= 0.9;
+        discount = "10%";
+      }
+      setDiscountApplied(discount || "None");
 
       setEstimate(totalRate.toFixed(2));
 
-      // Animate result card
-      setAnimateResult(false);
-      setTimeout(() => setAnimateResult(true), 50);
-
-      // Scroll to result card
-      const resultCard = document.getElementById("estimateResultCard");
-      if (resultCard) resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
-
+      // Scroll result card into view
+      document.getElementById("estimate-card")?.scrollIntoView({ behavior: "smooth" });
     } catch (err) {
       console.error(err);
-      setErrorMsg("Could not calculate distance. Please check addresses.");
-      setEstimate(null);
-      setDistanceKm(null);
-      setDiscountApplied(null);
-      setDirections(null);
+      setErrorMsg("Could not calculate route. Please check addresses.");
     }
   };
 
-  const handleClear = () => {
-    setDeliveryOption("");
-    setServiceType("");
-    setServiceOption("");
-    setQuantity(1);
-    setDestination("");
-    setPickup(false);
-    setPickupAddress("");
-    setEstimate(null);
-    setDistanceKm(null);
-    setDiscountApplied(null);
-    setErrorMsg("");
-    setDirections(null);
-  };
+ const handleClear = () => {
+  setDeliveryOption("");
+  setServiceType("");
+  setServiceOption("");
+  setQuantity(1);
+  setDestination("");
+  setPickup(false);
+  setPickupAddress("");
+  setEstimate(null);
+  setDistanceKm(null);
+  setErrorMsg("");
+  setDirections(null);
+
+  // Clear Autocomplete input fields
+  if (destinationRef.current?.getPlace) {
+    destinationRef.current.set("place", null);
+    const destInput = document.querySelector('input[placeholder="Enter destination"]');
+    if (destInput) destInput.value = "";
+  }
+
+  if (pickupRef.current?.getPlace) {
+    pickupRef.current.set("place", null);
+    const pickupInput = document.querySelector('input[placeholder="Enter pickup address"]');
+    if (pickupInput) pickupInput.value = "";
+  }
+};
+
 
   if (loadError) return <div>Error loading Google Maps</div>;
   if (!isLoaded) return <div>Loading Maps...</div>;
-
-  // Map center and zoom logic
-  let mapCenterAdjusted = mapCenter;
-  let mapZoom = 12;
-  if (directions) {
-    const bounds = new window.google.maps.LatLngBounds();
-    directions.routes[0].legs.forEach((leg) => {
-      bounds.extend(leg.start_location);
-      bounds.extend(leg.end_location);
-    });
-    mapCenterAdjusted = bounds.getCenter();
-    mapZoom = 12;
-  } else if (destination) {
-    // drop-off only
-    mapCenterAdjusted = null;
-    mapZoom = 12;
-  }
 
   return (
     <div className="container py-5">
@@ -290,31 +276,28 @@ export default function Estimates() {
           </form>
         </div>
 
-        {/* Map & Result */}
-        <div className="col-lg-7 col-md-12">
-          <div className="map-card card shadow-sm" style={{ position: "relative" }}>
+        {/* Map */}
+        <div className="col-lg-6 col-md-12 position-relative">
+          <div className="map-card card shadow-sm">
             <GoogleMap
-              mapContainerStyle={{ width: "100%", height: "450px", borderRadius: "12px" }}
-              center={mapCenterAdjusted || mapCenter}
-              zoom={mapZoom}
+              mapContainerStyle={{ width: "100%", height: "500px", borderRadius: "12px" }}
+              center={mapCenter}
+              zoom={deliveryOption === "dropOffOnly" ? 12 : 11}
             >
+              {markerPos && <Marker position={markerPos} />}
               {directions && <DirectionsRenderer directions={directions} />}
             </GoogleMap>
 
-            {estimate && distanceKm && (
-              <div
-                id="estimateResultCard"
-                className={`estimate-card ${animateResult ? "animate-popup" : ""}`}
-                style={{ position: "absolute", top: "15px", left: "15px", width: "300px" }}
-              >
+            {/* Floating Result Card */}
+            {estimate && (
+              <div id="estimate-card" className="estimate-card card p-4 shadow-sm animate-popup">
                 <h5>Estimate Details</h5>
-                <div className="estimate-item"><FaDollarSign className="icon" /> <strong>Cost:</strong> ${estimate}</div>
-                <div className="estimate-item"><FaRoad className="icon" /> <strong>Distance:</strong> {distanceKm} km</div>
-                {discountApplied > 0 && (
-                  <div className="estimate-item"><FaGift className="icon" /> <strong>Discount:</strong> {discountApplied}%</div>
-                )}
-                <div className="mt-3 text-center">
-                  <Link to="/booking" className="btn btn-success estimate-btn">Book Now</Link>
+                <p><i className="fas fa-dollar-sign"></i> <strong>Cost:</strong> ${estimate}</p>
+                <p><i className="fas fa-road"></i> <strong>Distance:</strong> {distanceKm}</p>
+                <p><i className="fas fa-percent"></i> <strong>Discount:</strong> {discountApplied}</p>
+                <div className="text-center mt-3">
+                  <p className="fw-semibold">If you like the estimate:</p>
+                  <Link to="/booking" className="btn btn-success">Book Now</Link>
                 </div>
               </div>
             )}
