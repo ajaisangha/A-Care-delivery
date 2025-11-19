@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Autocomplete, GoogleMap, DirectionsRenderer, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { ZONES, RATES, VOLUME_DISCOUNTS } from "../rates";
 import { Link } from "react-router-dom";
 
 const BASE_ADDRESS = "378 Vogel Place, Waterloo, ON, Canada";
-const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"; // replace with your key
+const GOOGLE_MAPS_API_KEY = "AIzaSyDjctUiqMfhtJNSCx8bMOg6-lz-IYohkhs";
 
 const getZoneIndex = (km) => {
   for (let i = 0; i < ZONES.length; i++) {
@@ -28,7 +28,7 @@ export default function Estimates() {
   const [pickupAddress, setPickupAddress] = useState("");
   const [estimate, setEstimate] = useState(null);
   const [distanceKm, setDistanceKm] = useState(null);
-  const [discountApplied, setDiscountApplied] = useState(null);
+  const [discountApplied, setDiscountApplied] = useState("None");
   const [errorMsg, setErrorMsg] = useState("");
   const [directions, setDirections] = useState(null);
   const [markerPos, setMarkerPos] = useState(null);
@@ -66,15 +66,16 @@ export default function Estimates() {
       setDistanceKm(null);
       setDirections(null);
       setMarkerPos(null);
+      setDiscountApplied("None");
       return;
     }
 
     setErrorMsg("");
-    setDirections(null);
-    setMarkerPos(null);
     setEstimate(null);
     setDistanceKm(null);
-    setDiscountApplied(null);
+    setDiscountApplied("None");
+    setDirections(null);
+    setMarkerPos(null);
 
     try {
       const geocoder = new window.google.maps.Geocoder();
@@ -87,12 +88,28 @@ export default function Estimates() {
       let km = 0;
 
       if (deliveryOption === "dropOffOnly" || !pickup) {
-        // Drop-Off Only: just show destination marker
-        setMarkerPos(destLocation);
-        km = 0; // can't calculate route from base in this mode
-        setDistanceKm("N/A");
+        // Drop-Off Only: distance from base address
+        const baseResults = await geocoder.geocode({ address: BASE_ADDRESS });
+        const baseLocation = baseResults.results[0].geometry.location;
+
+        const result = await new Promise((resolve, reject) => {
+          directionsService.route(
+            {
+              origin: baseLocation,
+              destination: destLocation,
+              travelMode: window.google.maps.TravelMode.DRIVING
+            },
+            (res, status) => (status === "OK" ? resolve(res) : reject(status))
+          );
+        });
+
+        result.routes[0].legs.forEach(leg => (km += leg.distance.value));
+        km /= 1000;
+
+        setDistanceKm(km.toFixed(1));
+        setMarkerPos(destLocation); // show marker at destination
       } else {
-        // Pickup & Drop-Off: calculate route from pickup to destination
+        // Pickup & Drop-Off: distance from pickup to destination
         const pickupResults = await geocoder.geocode({ address: pickupAddress });
         const pickupLocation = pickupResults.results[0].geometry.location;
 
@@ -107,72 +124,63 @@ export default function Estimates() {
           );
         });
 
-        setDirections(result);
-
-        km = 0;
         result.routes[0].legs.forEach(leg => (km += leg.distance.value));
         km /= 1000;
+
         setDistanceKm(km.toFixed(1));
+        setDirections(result);
       }
 
-      // Estimate calculation
-      let rateType = pickup ? "pickupDropOff" : "dropOffOnly";
-      const optionIndex = getServiceOptions().indexOf(serviceOption);
-      const baseRate = RATES[serviceType][rateType][optionIndex] || 0;
-
-      let totalRate = baseRate * quantity;
+      // Rate calculation based on zone
+      const zoneIndex = getZoneIndex(km);
+      const rateType = pickup ? "pickupDropOff" : "dropOffOnly";
+      const baseRate = RATES[serviceType][rateType][zoneIndex] || 0;
 
       // Apply volume discount
-      let discount = "";
-      if (quantity >= 50) {
-        totalRate *= 0.8;
-        discount = "20%";
-      } else if (quantity >= 20) {
-        totalRate *= 0.85;
-        discount = "15%";
-      } else if (quantity >= 10) {
-        totalRate *= 0.9;
-        discount = "10%";
+      let discountPercent = 0;
+      for (let v of VOLUME_DISCOUNTS) {
+        if (quantity >= v.min && quantity <= v.max) discountPercent = v.discount;
       }
-      setDiscountApplied(discount || "None");
 
-      setEstimate(totalRate.toFixed(2));
+      const totalRate = (baseRate * (1 - discountPercent)).toFixed(2);
+      setEstimate(totalRate);
+      setDiscountApplied(discountPercent > 0 ? `${discountPercent * 100}%` : "None");
 
-      // Scroll result card into view
+      // Scroll result into view
       document.getElementById("estimate-card")?.scrollIntoView({ behavior: "smooth" });
+
     } catch (err) {
       console.error(err);
       setErrorMsg("Could not calculate route. Please check addresses.");
     }
   };
 
- const handleClear = () => {
-  setDeliveryOption("");
-  setServiceType("");
-  setServiceOption("");
-  setQuantity(1);
-  setDestination("");
-  setPickup(false);
-  setPickupAddress("");
-  setEstimate(null);
-  setDistanceKm(null);
-  setErrorMsg("");
-  setDirections(null);
+  const handleClear = () => {
+    setDeliveryOption("");
+    setServiceType("");
+    setServiceOption("");
+    setQuantity(1);
+    setDestination("");
+    setPickup(false);
+    setPickupAddress("");
+    setEstimate(null);
+    setDistanceKm(null);
+    setErrorMsg("");
+    setDirections(null);
+    setMarkerPos(null);
+    setDiscountApplied("None");
 
-  // Clear Autocomplete input fields
-  if (destinationRef.current?.getPlace) {
-    destinationRef.current.set("place", null);
-    const destInput = document.querySelector('input[placeholder="Enter destination"]');
-    if (destInput) destInput.value = "";
-  }
-
-  if (pickupRef.current?.getPlace) {
-    pickupRef.current.set("place", null);
-    const pickupInput = document.querySelector('input[placeholder="Enter pickup address"]');
-    if (pickupInput) pickupInput.value = "";
-  }
-};
-
+    if (destinationRef.current?.getPlace) {
+      destinationRef.current.set("place", null);
+      const destInput = document.querySelector('input[placeholder="Enter destination"]');
+      if (destInput) destInput.value = "";
+    }
+    if (pickupRef.current?.getPlace) {
+      pickupRef.current.set("place", null);
+      const pickupInput = document.querySelector('input[placeholder="Enter pickup address"]');
+      if (pickupInput) pickupInput.value = "";
+    }
+  };
 
   if (loadError) return <div>Error loading Google Maps</div>;
   if (!isLoaded) return <div>Loading Maps...</div>;
@@ -282,7 +290,7 @@ export default function Estimates() {
             <GoogleMap
               mapContainerStyle={{ width: "100%", height: "500px", borderRadius: "12px" }}
               center={mapCenter}
-              zoom={deliveryOption === "dropOffOnly" ? 12 : 11}
+              zoom={12}
             >
               {markerPos && <Marker position={markerPos} />}
               {directions && <DirectionsRenderer directions={directions} />}
@@ -293,7 +301,7 @@ export default function Estimates() {
               <div id="estimate-card" className="estimate-card card p-4 shadow-sm animate-popup">
                 <h5>Estimate Details</h5>
                 <p><i className="fas fa-dollar-sign"></i> <strong>Cost:</strong> ${estimate}</p>
-                <p><i className="fas fa-road"></i> <strong>Distance:</strong> {distanceKm}</p>
+                <p><i className="fas fa-road"></i> <strong>Distance:</strong> {distanceKm} km</p>
                 <p><i className="fas fa-percent"></i> <strong>Discount:</strong> {discountApplied}</p>
                 <div className="text-center mt-3">
                   <p className="fw-semibold">If you like the estimate:</p>
