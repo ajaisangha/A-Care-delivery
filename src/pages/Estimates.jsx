@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Autocomplete, GoogleMap, DirectionsRenderer, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { ZONES, RATES, VOLUME_DISCOUNTS } from "../rates";
 import { Link } from "react-router-dom";
@@ -35,9 +35,16 @@ export default function Estimates() {
 
   const destinationRef = useRef(null);
   const pickupRef = useRef(null);
-  const resultRef = useRef(null);
+  const titleRef = useRef(null);
 
   const mapCenter = { lat: 43.4683, lng: -80.5204 };
+
+  // Scroll to title whenever result or error is updated
+  useEffect(() => {
+    if (estimate !== null || errorMsg) {
+      titleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [estimate, errorMsg]);
 
   const getServiceOptions = () => {
     switch (serviceType) {
@@ -89,7 +96,6 @@ export default function Estimates() {
       let km = 0;
 
       if (deliveryOption === "dropOffOnly" || !pickup) {
-        // Drop-Off Only: distance from base address
         const baseResults = await geocoder.geocode({ address: BASE_ADDRESS });
         const baseLocation = baseResults.results[0].geometry.location;
 
@@ -106,11 +112,9 @@ export default function Estimates() {
 
         result.routes[0].legs.forEach(leg => (km += leg.distance.value));
         km /= 1000;
-
         setDistanceKm(km.toFixed(1));
         setMarkerPos(destLocation);
       } else {
-        // Pickup & Drop-Off: distance from pickup to destination
         const pickupResults = await geocoder.geocode({ address: pickupAddress });
         const pickupLocation = pickupResults.results[0].geometry.location;
 
@@ -127,29 +131,22 @@ export default function Estimates() {
 
         result.routes[0].legs.forEach(leg => (km += leg.distance.value));
         km /= 1000;
-
         setDistanceKm(km.toFixed(1));
         setDirections(result);
       }
 
-      // Rate calculation based on zone
       const zoneIndex = getZoneIndex(km);
       const rateType = pickup ? "pickupDropOff" : "dropOffOnly";
       const baseRate = RATES[serviceType][rateType][zoneIndex] || 0;
 
-      // Apply volume discount
       let discountPercent = 0;
       for (let v of VOLUME_DISCOUNTS) {
         if (quantity >= v.min && quantity <= v.max) discountPercent = v.discount;
       }
 
-      const totalRate = (baseRate * (1 - discountPercent)).toFixed(2);
+      const totalRate = (baseRate * quantity * (1 - discountPercent)).toFixed(2);
       setEstimate(totalRate);
       setDiscountApplied(discountPercent > 0 ? `${discountPercent * 100}%` : "None");
-
-      // Scroll result into view
-      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-
     } catch (err) {
       console.error(err);
       setErrorMsg("Could not calculate route. Please check addresses.");
@@ -188,7 +185,20 @@ export default function Estimates() {
 
   return (
     <div className="container py-5">
-      <h2 className="mb-4 text-center">Delivery Cost Estimator</h2>
+      <h2 ref={titleRef} className="mb-4 text-center">Delivery Cost Estimator</h2>
+
+      {/* Error Message */}
+      {errorMsg && <div className="alert alert-danger mb-3 text-center">{errorMsg}</div>}
+
+      {/* Result Alert */}
+      {estimate && (
+        <div className="alert alert-success mb-3 d-flex flex-column align-items-center">
+          <div>
+            Estimated Cost: <strong>${estimate}</strong> | Distance: <strong>{distanceKm} km</strong> | Discount: <strong>{discountApplied}</strong>
+          </div>
+          <Link to="/booking" className="btn btn-success btn-sm mt-2">Book Now</Link>
+        </div>
+      )}
 
       <div className="row justify-content-center">
         {/* Form */}
@@ -286,14 +296,7 @@ export default function Estimates() {
         </div>
 
         {/* Map */}
-        <div className="col-lg-6 col-md-12">
-          {/* Result as Bootstrap Alert */}
-          {estimate && (
-            <div ref={resultRef} className="alert alert-info text-center">
-              <strong>Estimate:</strong> ${estimate} | <strong>Distance:</strong> {distanceKm} km | <strong>Discount:</strong> {discountApplied} | <Link to="/booking" className="btn btn-sm btn-success ms-2">Book Now</Link>
-            </div>
-          )}
-
+        <div className="col-lg-6 col-md-12 position-relative">
           <div className="map-card card shadow-sm">
             <GoogleMap
               mapContainerStyle={{ width: "100%", height: "500px", borderRadius: "12px" }}
@@ -312,8 +315,6 @@ export default function Estimates() {
           Estimated cost does not include taxes, discounts, or any additional charges.
         </p>
       </div>
-
-      {errorMsg && <div className="alert alert-danger mt-4">{errorMsg}</div>}
     </div>
   );
 }
