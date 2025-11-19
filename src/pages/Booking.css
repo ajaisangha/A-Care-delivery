@@ -1,0 +1,96 @@
+/* -------------------------------
+   General Container & Form Card
+--------------------------------- */
+.booking-form {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  margin-bottom: 3rem;
+}
+
+.booking-form .form-label {
+  font-weight: 600;
+}
+
+.booking-form select,
+.booking-form input,
+.booking-form textarea {
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+}
+
+.booking-form .btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.booking-form .btn-success:hover {
+  background: #198754;
+  box-shadow: 0 6px 18px rgba(25, 135, 84, 0.3);
+}
+
+.booking-form .btn-secondary:hover {
+  background: #6c757d;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* -------------------------------
+   Alerts
+--------------------------------- */
+.booking-alert {
+  max-width: 600px;
+  margin: 0 auto 1.5rem auto;
+  padding: 0.9rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.booking-alert-danger {
+  background: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+.booking-alert-success {
+  background: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+/* -------------------------------
+   Responsive Layout
+--------------------------------- */
+@media (max-width: 1200px) {
+  .booking-form {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-form {
+    padding: 1.5rem;
+  }
+
+  .booking-form .d-flex.gap-2 {
+    flex-direction: column;
+  }
+
+  .booking-form .d-flex.gap-2 .btn {
+    width: 100%;
+  }
+}
+
+/* -------------------------------
+   Miscellaneous
+--------------------------------- */
+.text-center p.text-muted {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 1.5rem;
+  color: #6c757d;
+}

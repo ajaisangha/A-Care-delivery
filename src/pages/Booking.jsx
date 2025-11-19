@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 import { ZONES, RATES, VOLUME_DISCOUNTS } from "../rates";
+import "../styles/Booking.css"; // make sure this is imported
 
 export default function Booking() {
   const [deliveryOption, setDeliveryOption] = useState("");
@@ -21,6 +22,7 @@ export default function Booking() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  const titleRef = useRef(null);
   const destinationRef = useRef(null);
   const pickupRef = useRef(null);
 
@@ -59,6 +61,10 @@ export default function Booking() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationError = validateFields();
+
+    // Scroll to title on submit
+    titleRef.current?.scrollIntoView({ behavior: "smooth" });
+
     if (validationError) {
       setErrorMsg(validationError);
       setSuccessMsg("");
@@ -66,7 +72,6 @@ export default function Booking() {
     }
     setErrorMsg("");
     setSuccessMsg("Booking request submitted successfully! Our team will contact you soon.");
-    // Reset form if needed
   };
 
   const handleClear = () => {
@@ -87,12 +92,25 @@ export default function Booking() {
     setNotes("");
     setErrorMsg("");
     setSuccessMsg("");
+
+    if (destinationRef.current?.getPlace) {
+      destinationRef.current.set("place", null);
+    }
+    if (pickupRef.current?.getPlace) {
+      pickupRef.current.set("place", null);
+    }
   };
 
   return (
     <div className="container py-5">
-      <h2 className="mb-4 text-center">Book a Delivery</h2>
-      <div className="row justify-content-center">
+      {/* Page Title */}
+      <h2 ref={titleRef} className="mb-4 text-center">Book a Delivery</h2>
+
+      {/* Show Error / Success at top */}
+      {errorMsg && <div className="alert alert-danger text-center">{errorMsg}</div>}
+      {successMsg && <div className="alert alert-success text-center">{successMsg}</div>}
+
+      <div className="row justify-content-center mt-3">
         <div className="col-lg-6 col-md-8">
           <form className="booking-form card p-4 shadow-sm" onSubmit={handleSubmit}>
             {/* Delivery Option */}
@@ -144,9 +162,7 @@ export default function Booking() {
                 >
                   <option value="">Select option</option>
                   {getServiceOptions().map((opt, i) => (
-                    <option key={i} value={opt}>
-                      {opt}
-                    </option>
+                    <option key={i} value={opt}>{opt}</option>
                   ))}
                 </select>
               </div>
@@ -281,9 +297,6 @@ export default function Booking() {
                 Clear
               </button>
             </div>
-
-            {errorMsg && <div className="alert alert-danger mt-3">{errorMsg}</div>}
-            {successMsg && <div className="alert alert-success mt-3">{successMsg}</div>}
           </form>
         </div>
       </div>
