@@ -35,6 +35,7 @@ export default function Estimates() {
 
   const destinationRef = useRef(null);
   const pickupRef = useRef(null);
+  const resultRef = useRef(null);
 
   const mapCenter = { lat: 43.4683, lng: -80.5204 };
 
@@ -107,7 +108,7 @@ export default function Estimates() {
         km /= 1000;
 
         setDistanceKm(km.toFixed(1));
-        setMarkerPos(destLocation); // show marker at destination
+        setMarkerPos(destLocation);
       } else {
         // Pickup & Drop-Off: distance from pickup to destination
         const pickupResults = await geocoder.geocode({ address: pickupAddress });
@@ -147,7 +148,7 @@ export default function Estimates() {
       setDiscountApplied(discountPercent > 0 ? `${discountPercent * 100}%` : "None");
 
       // Scroll result into view
-      document.getElementById("estimate-card")?.scrollIntoView({ behavior: "smooth" });
+      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
 
     } catch (err) {
       console.error(err);
@@ -285,7 +286,14 @@ export default function Estimates() {
         </div>
 
         {/* Map */}
-        <div className="col-lg-6 col-md-12 position-relative">
+        <div className="col-lg-6 col-md-12">
+          {/* Result as Bootstrap Alert */}
+          {estimate && (
+            <div ref={resultRef} className="alert alert-info text-center">
+              <strong>Estimate:</strong> ${estimate} | <strong>Distance:</strong> {distanceKm} km | <strong>Discount:</strong> {discountApplied} | <Link to="/booking" className="btn btn-sm btn-success ms-2">Book Now</Link>
+            </div>
+          )}
+
           <div className="map-card card shadow-sm">
             <GoogleMap
               mapContainerStyle={{ width: "100%", height: "500px", borderRadius: "12px" }}
@@ -295,20 +303,6 @@ export default function Estimates() {
               {markerPos && <Marker position={markerPos} />}
               {directions && <DirectionsRenderer directions={directions} />}
             </GoogleMap>
-
-            {/* Floating Result Card */}
-            {estimate && (
-              <div id="estimate-card" className="estimate-card card p-4 shadow-sm animate-popup">
-                <h5>Estimate Details</h5>
-                <p><i className="fas fa-dollar-sign"></i> <strong>Cost:</strong> ${estimate}</p>
-                <p><i className="fas fa-road"></i> <strong>Distance:</strong> {distanceKm} km</p>
-                <p><i className="fas fa-percent"></i> <strong>Discount:</strong> {discountApplied}</p>
-                <div className="text-center mt-3">
-                  <p className="fw-semibold">If you like the estimate:</p>
-                  <Link to="/booking" className="btn btn-success">Book Now</Link>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

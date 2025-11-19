@@ -45,21 +45,27 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.map-card:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
 /* -------------------------------
-   Floating Result Card
+   Floating Result Card (Top Center)
 --------------------------------- */
 .estimate-card {
   position: absolute;
   top: 15px;
-  left: 15px;
-  min-width: 260px;
-  max-width: 320px;
-  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  max-width: 90%;
+  background: linear-gradient(135deg, #ffffff, #f1f3f6);
   border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  padding: 1.5rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  padding: 1.2rem;
   z-index: 100;
   animation: popup 0.4s ease-out;
   transition: all 0.3s ease;
@@ -72,8 +78,8 @@
 }
 
 .estimate-card p {
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -81,7 +87,9 @@
 
 .estimate-card i {
   color: #0d6efd;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  min-width: 20px;
+  text-align: center;
 }
 
 /* Book Now Button in Center */
@@ -117,8 +125,9 @@
     position: relative;
     top: 0;
     left: 0;
-    max-width: 100%;
+    transform: none;
     margin: -60px auto 20px auto;
+    width: 90%;
   }
 
   .map-card {
@@ -133,30 +142,18 @@
 
   .estimate-card {
     margin-top: 15px;
-    min-width: 100%;
+    width: 100%;
   }
 }
 
 /* -------------------------------
-   Misc
+   Miscellaneous
 --------------------------------- */
 .text-center p.text-muted {
   font-size: 0.9rem;
   font-weight: 500;
   margin-top: 1.5rem;
   color: #6c757d;
-}
-
-/* Slight hover effect on map card */
-.map-card:hover {
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s ease;
-}
-
-/* Small icon tweaks */
-.estimate-card p i {
-  min-width: 20px;
-  text-align: center;
 }
 
 /* Button spacing in form */
