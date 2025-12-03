@@ -1,33 +1,35 @@
-### A+ Care Delivery
 
-## 📍 Service Zones from Our Vogel Place Office
+# 📦 A-Care Delivery – Official Rate Sheet  
+### *Based on distance zones, service type, and pickup/drop-off mode*
 
-| Zone | Distance | Areas Covered |
-|------|-----------|----------------|
-| **Zone 1** | 0–5 km | Uptown Waterloo, University District, Laurelwood, Beechwood |
-| **Zone 2** | 5–10 km | Central Kitchener, Boardwalk, Conestoga Mall area |
-| **Zone 3** | 10–15 km | Cambridge, St. Jacobs, Erb Village |
-| **Zone 4A** | 15–50 km | Guelph, Elmira, New Hamburg, Ayr, Baden |
-| **Zone 4B** | 50–100 km | Hamilton, Brantford, Woodstock |
-| **Zone 4C** | 100–200 km | Toronto (GTA), London, Niagara Region |
+# 📍 Distance Zones
+
+| Zone | Distance Range |
+|------|----------------|
+| **Zone 1** | 0–5 km |
+| **Zone 2** | 5–10 km |
+| **Zone 3** | 10–15 km |
+| **Zone 4A** | 15–50 km |
+| **Zone 4B** | 50–100 km |
+| **Zone 4C** | 100–200 km |
 
 ---
 
-## 🏵️ Florist Delivery Services
+# 🌸 Florist Delivery Rates
 
-### FULL SERVICE — Pickup from your shop & deliver to customer
+## **Pickup & Drop-Off**
 
-| Service Type | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
-|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Service | 0–5 | 5–10 | 10–15 | 15–50 | 50–100 | 100–200 |
+|--------|-----|------|-------|--------|---------|----------|
 | Single Bouquet | $14 | $18 | $22 | $28 | $38 | $55 |
 | Premium Arrangement | $18 | $22 | $26 | $32 | $45 | $65 |
 | Multiple Deliveries | $25 | $32 | $40 | $50 | $70 | $100 |
 | Wedding/Event | $45+ | $55+ | $65+ | $85+ | $120+ | $180+ |
 
-### DROP-OFF SERVICE — You bring to our office at 378 Vogel Pl
+## **Drop-Off Only**
 
-| Service Type | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
-|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Service | 0–5 | 5–10 | 10–15 | 15–50 | 50–100 | 100–200 |
+|--------|-----|------|-------|--------|---------|----------|
 | Single Bouquet | $12 | $15 | $19 | $24 | $32 | $47 |
 | Premium Arrangement | $15 | $19 | $22 | $27 | $38 | $55 |
 | Multiple Deliveries | $21 | $27 | $34 | $43 | $60 | $85 |
@@ -35,43 +37,43 @@
 
 ---
 
-## 💊 Pharmacy Prescription Delivery
+# 💊 Pharmacy Delivery Rates
 
-### FULL SERVICE — Pickup from pharmacy & deliver to patient
+## **Pickup & Drop-Off**
 
-| Service Type | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
-|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Service | 0–5 | 5–10 | 10–15 | 15–50 | 50–100 | 100–200 |
+|--------|-----|------|-------|--------|---------|----------|
 | Standard Delivery | $9 | $12 | $15 | $20 | $28 | $42 |
-| Scheduled Route | $7/delivery | $9/delivery | $12/delivery | $16/delivery | $22/delivery | $35/delivery |
+| Scheduled Route | $7 | $9 | $12 | $16 | $22 | $35 |
 | Urgent Medication | $18 | $22 | $28 | $38 | $52 | $75 |
 | Temperature Controlled | +$3 | +$3 | +$4 | +$5 | +$6 | +$8 |
 
-### DROP-OFF SERVICE — You bring to our office at 378 Vogel Pl
+## **Drop-Off Only**
 
-| Service Type | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
-|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Service | 0–5 | 5–10 | 10–15 | 15–50 | 50–100 | 100–200 |
+|--------|-----|------|-------|--------|---------|----------|
 | Standard Delivery | $8 | $10 | $13 | $17 | $24 | $36 |
-| Scheduled Route | $6/delivery | $8/delivery | $10/delivery | $14/delivery | $19/delivery | $30/delivery |
+| Scheduled Route | $6 | $8 | $10 | $14 | $19 | $30 |
 | Urgent Medication | $15 | $19 | $24 | $32 | $44 | $64 |
 | Temperature Controlled | +$3 | +$3 | +$4 | +$5 | +$6 | +$8 |
 
 ---
 
-## 📦 Retail & Parcel Delivery
+# 🛍 Retail & Parcel Delivery Rates
 
-### FULL SERVICE — Pickup from your store & deliver to customer
+## **Pickup & Drop-Off**
 
-| Package Size | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
-|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Service | 0–5 | 5–10 | 10–15 | 15–50 | 50–100 | 100–200 |
+|--------|-----|------|-------|--------|---------|----------|
 | Small (<2kg) | $13 | $17 | $21 | $27 | $37 | $52 |
 | Medium (2–10kg) | $17 | $22 | $27 | $35 | $48 | $68 |
 | Large (10–20kg) | $24 | $30 | $36 | $47 | $65 | $92 |
 | Extra Large (20kg+) | Quote | Quote | Quote | Quote | Quote | Quote |
 
-### DROP-OFF SERVICE — You bring to our office at 378 Vogel Pl
+## **Drop-Off Only**
 
-| Package Size | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
-|---------------|:------:|:------:|:------:|:------:|:------:|:------:|
+| Service | 0–5 | 5–10 | 10–15 | 15–50 | 50–100 | 100–200 |
+|--------|-----|------|-------|--------|---------|----------|
 | Small (<2kg) | $11 | $14 | $18 | $23 | $31 | $44 |
 | Medium (2–10kg) | $14 | $19 | $23 | $30 | $41 | $58 |
 | Large (10–20kg) | $20 | $26 | $31 | $40 | $55 | $78 |
@@ -79,36 +81,33 @@
 
 ---
 
-## ⚡ Same-Day Delivery Services
+# ⚡ Same-Day & Express Delivery Rates
 
-### FULL SERVICE — Pickup from your location & deliver immediately
+## **Pickup & Drop-Off**
 
-| Service Level | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
-|----------------|:------:|:------:|:------:|:------:|:------:|:------:|
-| Economy (by EOD) | $11 | $14 | $17 | $22 | $30 | $45 |
+| Service | 0–5 | 5–10 | 10–15 | 15–50 | 50–100 | 100–200 |
+|--------|-----|------|-------|--------|---------|----------|
+| Economy (EOD) | $11 | $14 | $17 | $22 | $30 | $45 |
 | Standard (4-hour) | $16 | $20 | $24 | $32 | $44 | $65 |
 | Express (2-hour) | $25 | $30 | $35 | $45 | $62 | $90 |
 | Rush (1-hour) | $35 | $42 | $49 | $65 | $85 | $120 |
 
-### DROP-OFF SERVICE — You bring to our office at 378 Vogel Pl
+## **Drop-Off Only**
 
-| Service Level | Zone 1 | Zone 2 | Zone 3 | Zone 4A | Zone 4B | Zone 4C |
-|----------------|:------:|:------:|:------:|:------:|:------:|:------:|
-| Economy (by EOD) | $9 | $12 | $14 | $19 | $26 | $38 |
+| Service | 0–5 | 5–10 | 10–15 | 15–50 | 50–100 | 100–200 |
+|--------|-----|------|-------|--------|---------|----------|
+| Economy (EOD) | $9 | $12 | $14 | $19 | $26 | $38 |
 | Standard (4-hour) | $14 | $17 | $20 | $27 | $37 | $55 |
 | Express (2-hour) | $21 | $26 | $30 | $38 | $53 | $77 |
 | Rush (1-hour) | $30 | $36 | $42 | $55 | $72 | $102 |
 
-
-## Discount
-    10+ deliveries: 10% discount
-
-    20+ deliveries: 15% discount
-
-    50+ deliveries: 20% discount
-
 ---
 
-**A+ Care Delivery**  
-📍 378 Vogel Pl, Waterloo, ON  
-📞 Professional Pickup & Delivery Services | Reliable | Local | Fast
+# 🎁 Volume Discounts
+
+| Deliveries | Discount |
+|------------|-----------|
+| 5–9 | **5%** |
+| 10–19 | **10%** |
+| 20–49 | **15%** |
+| 50+ | **20%** |
