@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 import { ZONES, RATES, VOLUME_DISCOUNTS } from "../rates";
-import "../styles/Booking.css"; // make sure this is imported
+import "./Booking.css"; // make sure this is imported
 
 export default function Booking() {
   const [deliveryOption, setDeliveryOption] = useState("");
