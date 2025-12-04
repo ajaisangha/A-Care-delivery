@@ -63,7 +63,6 @@ export default function Booking() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // always scroll to top/title
     titleRef.current?.scrollIntoView({ behavior: "smooth" });
 
     const error = validateFields();
@@ -91,6 +90,8 @@ export default function Booking() {
         customerEmail: customerEmail.trim(),
         customerPhone: customerPhone.trim(),
         notes,
+        driverID: "", // empty by default
+        deliveryStatus: "In Progress", // default status
         createdAt: serverTimestamp()
       });
 
@@ -227,8 +228,7 @@ export default function Booking() {
                     className="form-control"
                     placeholder="Enter destination"
                     defaultValue={destination}
-                      onChange={(e) => setDestination(e.target.value)}
-
+                    onChange={(e) => setDestination(e.target.value)}
                   />
                 </Autocomplete>
               </div>
