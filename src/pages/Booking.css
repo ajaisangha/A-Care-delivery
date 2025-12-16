@@ -127,3 +127,27 @@
   padding: 5px 10px;
   border-radius: 6px;
 }
+
+/* -------------------------------
+   Booking Page Header Actions
+--------------------------------- */
+.booking-page {
+  position: relative;
+}
+
+/* Check Status Button (Top Right) */
+.booking-status-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+  .booking-status-btn {
+    position: static;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+}

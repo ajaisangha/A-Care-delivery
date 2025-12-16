@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+
 import "./Booking.css";
 
 export default function Booking() {
@@ -27,6 +29,8 @@ export default function Booking() {
   const titleRef = useRef(null);
   const destinationRef = useRef(null);
   const pickupRef = useRef(null);
+  const navigate = useNavigate();
+
 
   const getServiceOptions = () => {
     switch (serviceType) {
@@ -104,8 +108,24 @@ export default function Booking() {
   };
 
   return (
-    <div className="container py-5">
-      <h2 ref={titleRef} className="mb-4 text-center">Book a Delivery</h2>
+    <div className="container py-5 booking-page">
+      <h2 ref={titleRef} className="mb-2 text-center">Book a Delivery</h2>
+
+      <div className="text-center mb-4">
+        
+        <button
+          type="button"
+          className="btn btn-outline-secondary booking-status-btn"
+          onClick={() =>
+            navigate("/status", {
+              state: { bookingId: createdID }
+            })
+          }
+        >
+          Check Status
+        </button>
+
+      </div>
 
       {errorMsg && <div className="alert alert-danger text-center">{errorMsg}</div>}
 
